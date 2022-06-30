@@ -1,16 +1,19 @@
 pipeline {
-     agent any
-     stages {
-        stage("Build") {
+    agent {
+        docker {
+            image 'node:lts-bullseye-slim'
+            args '-p 3000:3000'
+        }
+    }
+    stages {
+        stage('Build') {
             steps {
-                sh "sudo npm install"
-                sh "sudo npm run build"
+                sh 'npm install'
             }
         }
-        stage("Deploy") {
+        stage('Test') { 
             steps {
-                sh "sudo rm -rf /var/www/jenkins-react-app"
-                sh "sudo cp -r ${WORKSPACE}/build/ /var/www/jenkins-react-app/"
+                sh './jenkins/scripts/test.sh' 
             }
         }
     }
